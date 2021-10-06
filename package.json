@@ -1,0 +1,29 @@
+{
+  "name": "training-docker-postgres",
+  "version": "1.0.0",
+  "description": "Experiment with docker and postgres db",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArnaudBuchholz/training-docker-postgres.git"
+  },
+  "keywords": [
+    "docker",
+    "postgres"
+  ],
+  "author": "Arnaud Buchholz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ArnaudBuchholz/training-docker-postgres/issues"
+  },
+  "homepage": "https://github.com/ArnaudBuchholz/training-docker-postgres#readme",
+  "dependencies": {
+    "bookshelf": "^1.2.0",
+    "dotenv": "^10.0.0",
+    "knex": "^0.19.5",
+    "pg": "^8.7.1"
+  }
+}
