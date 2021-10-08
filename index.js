@@ -116,10 +116,10 @@ async function main () {
   })
 
   const user1 = await new User({ id: 1 }).fetch()
-  console.log(user1.attributes)
+  console.log('Using bookshelp helper', user1.attributes)
 
   const byId = await User.byId(1)
-  console.log(byId)
+  console.log('Using knex', byId)
 
   bookshelf.knex.destroy(() => console.log('ending...'))
 }
