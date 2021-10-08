@@ -3,6 +3,8 @@
 require('dotenv').config()
 
 async function main () {
+  const debug = process.argv.includes('--verbose')
+
   const knex = require('knex')({
     client: 'pg',
     connection: {
@@ -18,7 +20,7 @@ async function main () {
         done(null, conn)
       }
     },
-    debug: true
+    debug
   })
 
   const TABLENAMES = {
@@ -30,6 +32,7 @@ async function main () {
     console.log('Drop users table...')
     await knex.schema.dropTable(TABLENAMES.USERS)
   }
+
   console.log('Creating users table...')
   await knex.schema.createTable(TABLENAMES.USERS, table => {
     table.increments('id')
@@ -99,14 +102,26 @@ async function main () {
       })
   }
 
+  User.byId = function (id, columns) {
+    columns = columns || ['id', 'status', 'login', 'firstName', 'lastName']
+    return knex(TABLENAMES.USERS)
+      .first(columns)
+      .where({ id })
+  }
+
   await User.upsert({
     login: 'abuchholz',
     firstName: 'arnaud',
     lastName: 'buchholz'
   })
 
-  const arnaud = await new User({ id: 1 }).fetch()
-  console.log(arnaud.attributes)
+  const user1 = await new User({ id: 1 }).fetch()
+  console.log(user1.attributes)
+
+  const byId = await User.byId(1)
+  console.log(byId)
+
+  bookshelf.knex.destroy(() => console.log('ending...'))
 }
 
 main()
