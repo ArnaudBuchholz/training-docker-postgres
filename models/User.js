@@ -1,10 +1,14 @@
 'use strict'
 
-const bookshelf = require('./bookshelf')
+const bookshelf = require('../bookshelf')
+const Post = require('./Post')
 
 const User = bookshelf.model('User', {
   tableName: 'users',
-  hasTimestamps: true
+  hasTimestamps: true,
+  posts() {
+    return this.hasMany(Post)
+  }
 })
 
 User.createTable = async function () {
@@ -12,6 +16,7 @@ User.createTable = async function () {
   await knex.schema.createTable(User.prototype.tableName, table => {
     table.increments('id')
       .primary()
+
     table.enum('status', ['pending', 'active', 'locked', 'deleted'])
       .notNullable()
       .defaultTo('pending')
@@ -32,8 +37,6 @@ User.createTable = async function () {
     table.string('lastName')
       .notNullable()
 
-    /* Create relation between audience and connection */
-    // table.integer('connection_id').references('connections.id');
     table.unique(['login'])
   })
 }
@@ -43,30 +46,25 @@ User.upsert = function (user) {
   if (!login || !firstName || !lastName) {
     throw Error('login, firstName and lastName must be specified')
   }
-  console.log('User.upsert', user, '...')
   const { knex } = bookshelf
   return knex(User.prototype.tableName)
     .first('id')
     .where({ login })
     .then(record => {
       if (record) {
-        console.log('\trecord found, updating...')
+        // Record found, updating...
         return knex(User.prototype.tableName)
           .update({
             ...user,
             updated_at: new Date()
           })
-          .where({ id })
+          .where({ id: record.id })
       }
-      console.log('\tno record found, creating...')
+      // No record found, creating...
       return knex(User.prototype.tableName)
         .insert(user)
         .returning('id')
         .then(ids => ids[0])
-    })
-    .then(value => {
-      console.log('\tdone.')
-      return value
     })
 }
 
