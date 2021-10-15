@@ -15,7 +15,7 @@ const knex = require('knex')({
   },
   pool: {
     afterCreate: (conn, done) => {
-      console.log('Connected')
+      console.log('Connected to Postgres')
       done(null, conn)
     }
   },
